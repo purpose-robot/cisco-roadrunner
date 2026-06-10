@@ -141,14 +141,14 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 
 	// --------------------------------------------------------------------------------------------------------------------------
 
-	showModuleOut, err := driver.SendCommand("show module")
-	if err != nil {
-		return fmt.Errorf("command 'show module' failed; %v", err)
-	}
-
 	showVersionOut, err := driver.SendCommand("show version")
 	if err != nil {
 		return fmt.Errorf("command 'show version' failed; %v", err)
+	}
+
+	showInventoryOut, err := driver.SendCommand("show inventory")
+	if err != nil {
+		return fmt.Errorf("command 'show inventory' failed; %v", err)
 	}
 
 	showCdpNeighborOut, err := driver.SendCommand("show cdp neighbor detail")
@@ -158,12 +158,12 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 
 	// --------------------------------------------------------------------------------------------------------------------------
 
-	showModuleParsed, err := parseTemplate("02_cisco_ios_show_module.textfsm", showModuleOut)
+	showVersionParsed, err := parseTemplate("01_cisco_ios_show_version.textfsm", showVersionOut)
 	if err != nil {
 		return err
 	}
 
-	showVersionParsed, err := parseTemplate("01_cisco_ios_show_version.textfsm", showVersionOut)
+	showInventoryParsed, err := parseTemplate("02_cisco_ios_show_inventory.textfsm", showInventoryOut)
 	if err != nil {
 		return err
 	}
@@ -238,8 +238,8 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 			location,
 			localHostname,
 			localIpAddress,
-			strVal(showModuleParsed[0], "MODEL"),
-			strVal(showModuleParsed[0], "SERIAL"),
+			strVal(showInventoryParsed[0], "SN"),
+			strVal(showInventoryParsed[0], "PID"),
 			strVal(showVersionParsed[0], "VERSION"),
 		},
 	)
