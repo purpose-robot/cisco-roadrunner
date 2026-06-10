@@ -214,25 +214,25 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 		}
 
 		if remoteIpAddress == "" {
-			log.Printf("skipping discovery for network device %s: Missing IP address", remoteHostname)
+			log.Printf("skipping discovery for network device %s: Missing IP address\n", remoteHostname)
 			continue
 		}
 
 		if strings.Contains(remotePlatform, "IP Phone") ||
 			strings.Contains(remoteCapabilities, "Host Phone") {
-			log.Printf("skipping discovery for network device %s; Platform: IP Phone", remoteHostname)
+			log.Printf("skipping discovery for network device %s; Platform: IP Phone\n", remoteHostname)
 			continue
 		}
 
 		if strings.Contains(remotePlatform, "AIR") ||
 			strings.Contains(remoteCapabilities, "Trans-Bridge") {
-			log.Printf("skipping discovery for network device %s; Platform: Wireless", remoteHostname)
+			log.Printf("skipping discovery for network device %s; Platform: Wireless\n", remoteHostname)
 			continue
 		}
 
 		err = fetchInformationFromDevice(debug, remoteIpAddress, username, password, location, visited)
 		if err != nil {
-			log.Printf("failed to retrieve information from network device: %s; %v", remoteHostname, err)
+			log.Printf("failed to retrieve information from network device: %s; %v\n", remoteHostname, err)
 		}
 	}
 
