@@ -214,19 +214,19 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 		}
 
 		if remoteIpAddress == "" {
-			log.Printf("skipping discovery for network device %s: missing IP address", remoteHostname)
+			log.Printf("skipping discovery for network device %s: Missing IP address", remoteHostname)
 			continue
 		}
 
 		if strings.Contains(remotePlatform, "IP Phone") ||
 			strings.Contains(remoteCapabilities, "Host Phone") {
-			log.Printf("skipping discovery for network device %s: device is IP Phone", remoteHostname)
+			log.Printf("skipping discovery for network device %s; Platform: IP Phone", remoteHostname)
 			continue
 		}
 
 		if strings.Contains(remotePlatform, "AIR") ||
 			strings.Contains(remoteCapabilities, "Trans-Bridge") {
-			log.Printf("skipping discovery for network device %s: device is Wireless AP", remoteHostname)
+			log.Printf("skipping discovery for network device %s; Platform: Wireless", remoteHostname)
 			continue
 		}
 
