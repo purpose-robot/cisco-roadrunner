@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/scrapli/scrapligo/driver/options"
 	"github.com/scrapli/scrapligo/logging"
@@ -191,8 +192,10 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 	defer cdpNeighborsWriter.Flush()
 
 	for _, neighbor := range showCdpNeighborParsed {
+		remotePlatform := strVal(neighbor, "PLATFORM")
 		remoteHostname := strVal(neighbor, "NEIGHBOR_NAME")
 		remoteIpAddress := strVal(neighbor, "MGMT_ADDRESS")
+		remoteCapabilities := strVal(neighbor, "CAPABILITIES")
 
 		err = cdpNeighborsWriter.Write(
 			[]string{
@@ -201,6 +204,7 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 				localIpAddress,
 				strVal(neighbor, "LOCAL_INTERFACE"),
 				remoteHostname,
+				remotePlatform,
 				remoteIpAddress,
 				strVal(neighbor, "NEIGHBOR_INTERFACE"),
 			},
@@ -210,7 +214,19 @@ func fetchInformationFromDevice(debug bool, localIpAddress, username, password, 
 		}
 
 		if remoteIpAddress == "" {
-			log.Printf("skipping discovery for %s: invalid or missing IP address", remoteHostname)
+			log.Printf("skipping discovery for network device %s: missing IP address", remoteHostname)
+			continue
+		}
+
+		if strings.Contains(remotePlatform, "IP Phone") ||
+			strings.Contains(remoteCapabilities, "Host Phone") {
+			log.Printf("skipping discovery for network device %s: device is IP Phone", remoteHostname)
+			continue
+		}
+
+		if strings.Contains(remotePlatform, "AIR") ||
+			strings.Contains(remoteCapabilities, "Trans-Bridge") {
+			log.Printf("skipping discovery for network device %s: device is Wireless AP", remoteHostname)
 			continue
 		}
 
